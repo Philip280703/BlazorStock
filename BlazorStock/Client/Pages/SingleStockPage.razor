@@ -1,0 +1,107 @@
+﻿@page "/singlestockpage"
+@using Newtonsoft.Json;
+@using Newtonsoft.Json.Linq;
+@using BlazorStock.Shared.Models;
+@using BlazorStock.Client.Services;
+@inject HttpClient HttpClient
+
+<h3>Stock Information</h3>
+
+<div>
+    <label>Stock Symbol:</label>
+    <input @bind="StockSymbol" placeholder="Enter Stock Symbol" />
+    <button @onclick="FetchStockData">Fetch Stock</button>
+</div>
+
+@if (IsLoading)
+{
+    <p>Loading...</p>
+}
+else if (StockData != null)
+{
+    <div>
+        <h4>Stock Details:</h4>
+        <p><strong>Symbol:</strong> @StockData.TickerSymbol</p>
+        <p><strong>Current Price:</strong> @StockData.CurrentPrice.ToString("C")</p>
+        <p><strong>Market:</strong> @StockData.Market</p>
+        <p><strong>Name:</strong> @StockData.Name</p>
+    </div>
+}
+else if (ErrorMessage != null)
+{
+    <p style="color:red;">Error: @ErrorMessage</p>
+}
+
+
+@code {
+
+    private StockGetApi _stockApi;
+    
+
+    // Properties
+    private string StockSymbol { get; set; } = string.Empty;
+    private Stock StockData { get; set; }
+    private bool IsLoading { get; set; } = false;
+    private string ErrorMessage { get; set; } = null;
+
+    protected override void OnInitialized()
+    {
+        // Initialize Stock API
+        _stockApi = new StockGetApi(); 
+    }
+
+    private async Task FetchStockData()
+    {
+        if (string.IsNullOrWhiteSpace(StockSymbol))
+        {
+            ErrorMessage = "Please enter a stock symbol.";
+            return;
+        }
+
+        IsLoading = true;
+        ErrorMessage = null;
+
+        try
+        {
+            // Fetch stock data from API
+            var stockResponse = await _stockApi.GetDailyStockPriceAsync(StockSymbol);
+
+            // Map the response to the Stock model
+            StockData = MapStockData(stockResponse, StockSymbol);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to fetch data: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private Stock MapStockData(JObject stockData, string stockSymbol)
+    {
+        try
+        {
+            var timeSeries = stockData["Time Series (Daily)"];
+            if (timeSeries == null)
+                throw new Exception("Time Series data not found.");
+
+            // Get the latest stock data
+            var latestDate = timeSeries.First as JProperty;
+            var latestData = latestDate?.Value;
+
+            return new Stock
+                {
+                    TickerSymbol = stockSymbol,
+                    CurrentPrice = decimal.Parse(latestData["4. close"].ToString()),
+                    Name = "Unknown", // Placeholder, Alpha Vantage doesn't provide name
+                    Market = "NASDAQ" // You can customize this
+                };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error mapping data: {ex.Message}");
+        }
+    }
+}
