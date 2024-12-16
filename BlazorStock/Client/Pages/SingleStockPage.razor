@@ -22,7 +22,7 @@ else if (StockData != null)
     <div>
         <h4>Stock Details:</h4>
         <p><strong>Symbol:</strong> @StockData.TickerSymbol</p>
-        <p><strong>Current Price:</strong> @StockData.CurrentPrice.ToString("C")</p>
+        <p><strong>Current Price:</strong> @StockData.CurrentPrice.ToString("0.00") $</p>
         <p><strong>Market:</strong> @StockData.Market</p>
         <p><strong>Name:</strong> @StockData.Name</p>
     </div>

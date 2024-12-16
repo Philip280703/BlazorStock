@@ -1,0 +1,72 @@
+﻿@page "/stockinformation"
+
+@using BlazorStock.Client.Services
+@using BlazorStock.Shared.Models;
+@using Newtonsoft.Json.Linq;
+@inject HttpClient httpCliet
+
+<h3>Stock Information</h3>
+
+<div>
+    <label>Stock Symbol:</label>
+    <input @bind="StockSymbol" placeholder="Enter Stock Symbol" />
+    <button @onclick="FetchStockData">Fetch Stock Information</button>
+</div>
+
+@if (IsLoading)
+{
+    <p>Loading...</p>
+}
+else if (StockData != null)
+{
+    <div>
+        <h4>Stock Details:</h4>
+        <p><strong>Symbol:</strong> @StockData["Symbol"]</p>
+        <p><strong>Name:</strong> @StockData["Name"]</p>
+        <p><strong>Sector:</strong> @StockData["Sector"]</p>
+        <p><strong>Industry:</strong> @StockData["Industry"]</p>
+        <p><strong>Market:</strong> @StockData["Exchange"]</p>
+        <p><strong>Description:</strong> @StockData["Description"]</p>
+        <p><strong>Market Capitalization:</strong> @StockData["MarketCapitalization"]</p>
+    </div>
+}
+else if (ErrorMessage != null)
+{
+    <p style="color:red;">Error: @ErrorMessage</p>
+}
+
+@code {
+    private string StockSymbol { get; set; } = string.Empty;
+    private JObject StockData { get; set; }
+    private bool IsLoading { get; set; } = false;
+    private string ErrorMessage { get; set; } = null;
+    [Inject]
+    private StockGetApi api { get; set; }
+
+    private async Task FetchStockData()
+    {
+        if (string.IsNullOrWhiteSpace(StockSymbol))
+        {
+            ErrorMessage = "Please enter a stock symbol.";
+            return;
+        }
+
+        IsLoading = true;
+        ErrorMessage = null;
+
+        try
+        {
+            // Fetch stock information from API
+            StockData = await api.GetStockInformationAsync(StockSymbol);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to fetch data: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+}
+

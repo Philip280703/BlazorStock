@@ -17,6 +17,13 @@ namespace BlazorStock.Client.Services
             _httpClient = new HttpClient();
         }
 
+        /// <summary>
+        /// For getting the daily stock range, price and volume for the last week
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
         public async Task<JObject> GetDailyStockPriceAsync(string symbol)
         {
             if (string.IsNullOrWhiteSpace(symbol)) throw new ArgumentNullException(nameof(symbol));
@@ -45,6 +52,41 @@ namespace BlazorStock.Client.Services
             }
         }
 
+
+        /// <summary>
+        /// For all informations about a stocl
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="HttpRequestException"></exception>
+        public async Task<JObject> GetStockInformationAsync(string symbol)
+        {
+            if (string.IsNullOrWhiteSpace(symbol)) throw new ArgumentNullException(nameof(symbol));
+
+            string requestUrl = $"{_baseUrl}?function=OVERVIEW&symbol={symbol}&apikey={_apiKey}";
+
+            try
+            {
+                HttpResponseMessage httpResponse = await _httpClient.GetAsync(requestUrl);
+
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    string jsonResponse = await httpResponse.Content.ReadAsStringAsync();
+                    JObject stockData = JObject.Parse(jsonResponse);
+                    return stockData;
+                }
+                else
+                {
+                    throw new HttpRequestException($"Error fetching stock data: {httpResponse.StatusCode}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Exception in API call: {ex.Message}");
+                throw;
+            }
+        }
 
     }
 }

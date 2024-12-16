@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStock.Server", "BlazorStock\Server\BlazorStock.Server.csproj", "{E01C978E-82C8-4839-85D7-F8B345F4A1C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStock.Server", "BlazorStock\Server\BlazorStock.Server.csproj", "{E01C978E-82C8-4839-85D7-F8B345F4A1C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStock.Client", "BlazorStock\Client\BlazorStock.Client.csproj", "{83EC0686-4380-45E1-B359-E49EE0114BC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStock.Client", "BlazorStock\Client\BlazorStock.Client.csproj", "{83EC0686-4380-45E1-B359-E49EE0114BC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorStock.Shared", "BlazorStock\Shared\BlazorStock.Shared.csproj", "{0FB118E1-300E-49F8-AFD5-21B4F27738CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorStock.Shared", "BlazorStock\Shared\BlazorStock.Shared.csproj", "{0FB118E1-300E-49F8-AFD5-21B4F27738CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
